@@ -12,15 +12,25 @@ class EloquentCamperRepository implements CamperRepositoryInterface{
     }
 
     public function getById(int $documento): ?Camper{
-        return Camper::find($documento);
+        // SELECT * FROM campers WHERE id = ?
+        // return Camper::find($documento);
+    
+        // SELECT * FROM campers WHERE documento = ?
+        return Camper::where('documento', $documento)->first();
     }
 
     public function create(array $data): Camper {
+
+        $exists = $this->getById($data['documento']);
+        if ($exists){
+            return $exists;
+        }
         return Camper::create($data);
     }
     public function update(int $documento, array $data): bool{
-        $camper = Camper::find($documento);
-
+        
+        $camper = $this->getById($data['documento']);
+        
         return $camper ? $camper->update($data) : false;
     }
     public function delete(int $documento ): bool {

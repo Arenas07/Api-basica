@@ -1,21 +1,30 @@
-<?php 
+<?php
 
 require_once "vendor/autoload.php";
 
-use App\Middleware\JsonBodyParserMiddleware;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Server\RequestHandlerInterface as Handler;
+use App\Infrastructure\Database\Connection;
 use Slim\Factory\AppFactory;
+use Dotenv\Dotenv;
 
-// Middleware 
-// Global -> a todas las request del backend
 
-$app->add(function(Request $req, Handler $han ): Response{
-    $response = $han->handle($req);
-    return $response->withHeader('Content-Type', 'application/json');
-});
+// Variables .env
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
-$app->add(new JsonBodyParserMiddleware());
+// Se carga el container de PHP-DI
+$container = require_once 'bootstrap/container.php';
+
+// Asignamos a Slim el contenedor
+AppFactory::setContainer($container);
+
+// Iniciar la coneccion con la DB
+
+Connection::init();
+
+$app = AppFactory::create();
+
+
+(require_once 'public/index.php')($app);
+(require_once 'routes/camper.php')($app);
 
 $app->run();
