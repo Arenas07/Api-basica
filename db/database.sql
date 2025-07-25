@@ -14,6 +14,17 @@ CREATE TABLE campers (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+CREATE TABLE `usuarios`
+(
+    `id`     int          NOT NULL AUTO_INCREMENT,
+    `nombre` varchar(100) NOT NULL,
+    `email`  varchar(100) NOT NULL,
+    `password`  varchar(255) NOT NULL,
+    `rol`  enum('admin', 'user') NOT NULL DEFAULT 'user',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `email` (`email`)
+);
+
 INSERT INTO campers (nombre, edad, documento, tipo_documento, nivel_ingles, nivel_programacion)
 VALUES 
 ('Ana María Ríos', 19, '1001234567', 'Cédula', 4, 3),
