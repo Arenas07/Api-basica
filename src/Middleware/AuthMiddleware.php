@@ -6,7 +6,8 @@ use App\Domain\Models\User;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Server\RequestHandlerInterface as Handle;
-use Slim\Psr7\Response as SlimResponse;
+use Slim\Exception\HttpUnauthorizedException;
+
 
 class AuthMiddleware {
 
@@ -20,7 +21,8 @@ class AuthMiddleware {
         $auth = $request->getHeaderLine('Authorization');
 
         if (!$auth || !str_starts_with($auth, 'Basic ')){
-            return $this->unauthorized();
+
+            throw new HttpUnauthorizedException($request);
         }
 
         $decoded = base64_decode(substr($auth, 6));
@@ -30,17 +32,11 @@ class AuthMiddleware {
 
         if(!$user || !password_verify($password, $user->password)){
 
-            return $this->unauthorized();
+            throw new HttpUnauthorizedException($request);
         }
 
         $request = $request->withAttribute('user', $user);
 
         return $handler->handle($request);
-    }
-
-    private function unauthorized(): Response {
-        $response = new SlimResponse();
-        $response->getBody()->write(json_encode(['Error' => 'No autorizado']));
-        return $response->withStatus(401)->withHeader('Content-Type', 'application/json');  
     }
 }

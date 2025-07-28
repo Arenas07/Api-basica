@@ -14,10 +14,11 @@ CREATE TABLE campers (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+
 CREATE TABLE `usuarios`
 (
     `id`     int          NOT NULL AUTO_INCREMENT,
-    `nombre` varchar(100) NOT NULL,
+    `nombre` varchar(100) NOT NULL DEFAULT '',
     `email`  varchar(100) NOT NULL,
     `password`  varchar(255) NOT NULL,
     `rol`  enum('admin', 'user') NOT NULL DEFAULT 'user',
